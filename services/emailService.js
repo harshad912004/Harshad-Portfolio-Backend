@@ -5,7 +5,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const sendContactEmail = async (contactData) => {
   const { name, email, subject, message } = contactData;
 
-  await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: "Portfolio Contact <onboarding@resend.dev>",
     to: process.env.EMAIL_USER,
     replyTo: email,
@@ -19,6 +19,13 @@ const sendContactEmail = async (contactData) => {
             Submitted At: ${new Date().toLocaleString()}
           `,
   });
+
+  if (error) {
+    console.error("Resend error:", error);
+    throw error;
+  }
+
+  console.log("Resend success:", data);
 };
 
 module.exports = {
