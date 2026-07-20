@@ -3,6 +3,7 @@ const cors = require('cors');
 const contactRoutes = require('./routes/contactRoutes');
 const errorHandler = require('./middleware/errorHandler');
 const helmet = require('helmet');
+const morgan = require("morgan");
 const rateLimit = require('express-rate-limit');
 const compression = require("compression");
 
