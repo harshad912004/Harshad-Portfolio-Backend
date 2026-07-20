@@ -2,44 +2,42 @@ const express = require('express');
 const cors = require('cors');
 const contactRoutes = require('./routes/contactRoutes');
 const errorHandler = require('./middleware/errorHandler');
-
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const compression = require("compression");
+app.use(morgan("combined"));
+app.use(compression());
 const app = express();
-
-// Configure CORS to allow requests from Next.js frontend
+const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: allowedOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
 app.use(cors(corsOptions));
-
-// Middleware to parse JSON and urlencoded request bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Test route to check backend health status
+app.use(helmet());
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // limit each IP to 50 requests per window
+  message: 'Too many requests from this IP, please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false
+});
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'UP',
     timestamp: new Date().toISOString()
   });
 });
-
-// API Routes
-app.use('/api', contactRoutes);
-
-// Ignore favicon requests
+app.use('/api', limiter, contactRoutes);
 app.get('/favicon.ico', (req, res) => res.status(204).end());
-
-// Catch-all route for unknown API endpoints
 app.use((req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`);
   error.statusCode = 404;
   next(error);
 });
-
-// Central Error Handling Middleware
 app.use(errorHandler);
-
 module.exports = app;
