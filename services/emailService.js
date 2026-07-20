@@ -2,11 +2,21 @@ const nodemailer = require('nodemailer');
 
 // Configure Gmail transport using environment variables
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+});
+
+transporter.verify((err, success) => {
+  if (err) {
+    console.error("SMTP verify failed:", err);
+  } else {
+    console.log("SMTP server is ready.");
+  }
 });
 
 /**
@@ -22,7 +32,7 @@ const sendContactEmail = async (contactData) => {
   const currentTime = new Date().toLocaleString();
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: contactData.email, // Sender's email address
     to: process.env.EMAIL_USER, // Sends email to developer's own address
     subject: '📩 New Portfolio Contact Message',
     text: `

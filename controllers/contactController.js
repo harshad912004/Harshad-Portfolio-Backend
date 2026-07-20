@@ -17,7 +17,7 @@ exports.createContact = async (req, res, next) => {
     }
 
     const { name, email, subject, message } = req.body;
-    
+
     // Save to database
     await Contact.create({ name, email, subject, message });
 
