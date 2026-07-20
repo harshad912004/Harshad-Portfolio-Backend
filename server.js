@@ -13,10 +13,8 @@ async function startServer() {
 
     // Start the server
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log(process.env.RAILWAY_STATIC_URL);
-      console.log(process.env.RAILWAY_PUBLIC_DOMAIN);
-      console.log(`CORS allowed origin: ${process.env.FRONTEND_URL}`);
+      // console.log(`Server is running on port ${PORT}`);
+      // console.log(`CORS allowed origin: ${process.env.FRONTEND_URL}`);
     });
   } catch (error) {
     console.error('Database connection failed. Server not started.', error);

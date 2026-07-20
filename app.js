@@ -9,6 +9,8 @@ const compression = require("compression");
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(morgan("combined"));
 
 app.use(compression());
