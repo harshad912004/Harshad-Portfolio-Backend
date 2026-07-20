@@ -16,7 +16,7 @@ exports.createContact = async (req, res, next) => {
       });
     }
 
-    const { name, email, subject, message } = req.body;
+    const { name, email, subject, message, timezone } = req.body;
 
     // Save to database
     await Contact.create({ name, email, subject, message });
@@ -27,7 +27,7 @@ exports.createContact = async (req, res, next) => {
     });
 
     // Send email in the background
-    sendContactEmail({ name, email, subject, message })
+    sendContactEmail({ name, email, subject, message, timezone })
       .catch(err => {
         console.error("Failed to send email:", err);
       });
