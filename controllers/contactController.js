@@ -21,17 +21,16 @@ exports.createContact = async (req, res, next) => {
     // Save to database
     await Contact.create({ name, email, subject, message });
 
-    // Send email notification
-    try {
-      await sendContactEmail({ name, email, subject, message });
-    } catch (emailError) {
-      console.error('Failed to send email notification:', emailError);
-    }
-
     res.status(201).json({
       success: true,
-      message: 'Message sent successfully'
+      message: "Message sent successfully"
     });
+
+    // Send email in the background
+    sendContactEmail({ name, email, subject, message })
+      .catch(err => {
+        console.error("Failed to send email:", err);
+      });
   } catch (error) {
     next(error);
   }
